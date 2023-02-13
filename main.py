@@ -65,31 +65,31 @@ async def main():
                                  f"не получил сообщения с кнопками для создания чека! Переходим к следующему аккаунту...")
                     continue
                 try:
-                    for _ in ["Personal", "Create", "Coin_1", "Max", "Success"]:  # создаем чек на максимальную сумму
+                    for _ in range(5):  # создаем чек на максимальную сумму
+                        m: Message = (await client(GetMessagesRequest(id=[m.id]))).messages[0]
+                        if m.reply_markup.rows[0].buttons[0].text == "📥 Deposit":
+                            raise Exception("нулевой баланс")
                         await client(GetBotCallbackAnswerRequest(
                             peer=BOT_USERNAME,
                             msg_id=m.id,
-                            data=bytes(_.encode('UTF-8'))
+                            data=bytes(m.reply_markup.rows[0].buttons[0].data)
                         ))
-                        await asyncio.sleep(0.5)
-                except:
-                    logger.error(f"{get_display_name(me)} (uid: {me.id}) -> "
-                                 f"получил ошибку при создании чека, возможно, на балансе 0$? "
-                                 "Переходим к следующему аккаунту...")
+                except Exception as err:
+                    logger.error(f"{get_display_name(me)} (uid: {me.id}) -> получил ошибку при создании чека: {err}.")
                     continue
 
             final_message = (await client(GetMessagesRequest(id=[m.id]))).messages[0]  # получаем последнее сообщение
-            cheque_amount = re.search(r"(\d+.\d+) TON", final_message.message).group(0)  # парсим сумму чека
+            cheque_amount = re.search(r"(\d+.\d+)\s(.*)", final_message.message).group(0)  # парсим сумму чека
             cheque_url = f"https://t.me/{BOT_USERNAME}?" + re.search(r"start=(.*)", final_message.message).group(0)  # создаем ссылку на чек
 
-            logger.info(f"{get_display_name(me)} (uid: {me.id}) -> создал чек на {cheque_amount} TON, "
+            logger.info(f"{get_display_name(me)} (uid: {me.id}) -> создал чек на {cheque_amount}, "
                         f"URL: {cheque_url}...")
             await client.send_message(OWNER_USERNAME,
                                       f"💰 <b>Чек на {cheque_amount}!</b>\n➡️ {cheque_url}")  # отправляем сообщение владельцу
         except Exception as err:
             logger.error(f"{get_display_name(me)} (uid: {me.id}) -> Возникла непредвиденная ошибка: {err}")
 
-        logger.info(f"{get_display_name(me)} (uid: {me.id}) -> отключаемся...")
+        logger.info(f"{get_display_name(me)} (uid: {me.id}) -> Отключаемся...")
         await client.disconnect()
 
     logger.info("Сессии кончились!")
