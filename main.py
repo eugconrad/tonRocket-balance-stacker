@@ -59,8 +59,7 @@ async def main():
                 conv: Conversation
                 await conv.send_message("/cheques")
                 m: Message = await conv.get_response()
-                m_markup = m.reply_markup
-                if not m_markup:
+                if not m.reply_markup:
                     logger.error(f"{get_display_name(me)} (uid: {me.id}) -> "
                                  f"не получил сообщения с кнопками для создания чека! Переходим к следующему аккаунту...")
                     continue
