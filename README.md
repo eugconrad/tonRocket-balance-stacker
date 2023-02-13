@@ -14,7 +14,7 @@
 2. Перейти в директорию скрипта: ``cd tonRocket-balance-stacker``
 3. Создать виртуальное окружение: ``python3 -m venv env``
 4. Активировать виртуальное окружение: ``source env/bin/activate``
-5. Установить зависимости: python3 -m pip install -r requirements.txt
+5. Установить зависимости: ``python3 -m pip install -r requirements.txt``
 6. Вы прекрасны.
 
 ## ⚙️ Настройка конфига
