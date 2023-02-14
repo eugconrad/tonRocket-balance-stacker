@@ -1,8 +1,7 @@
-import re
-
 import asyncio
 
 from loguru import logger
+
 from telethon.sync import TelegramClient
 from telethon.utils import get_display_name
 from telethon.tl.custom.conversation import Conversation
@@ -66,7 +65,7 @@ async def main():
                 try:
                     for _ in range(5):  # создаем чек на максимальную сумму
                         m: Message = (await client(GetMessagesRequest(id=[m.id]))).messages[0]
-                        if m.reply_markup.rows[0].buttons[0].text == "📥 Deposit":
+                        if "📥" in m.reply_markup.rows[0].buttons[0].text:  # если кнопка с депозитом найдена
                             raise Exception("нулевой баланс")
                         await client(GetBotCallbackAnswerRequest(
                             peer=BOT_USERNAME,
@@ -78,13 +77,9 @@ async def main():
                     continue
 
             final_message = (await client(GetMessagesRequest(id=[m.id]))).messages[0]  # получаем последнее сообщение
-            cheque_amount = re.search(r"(\d+.\d+)\s(.*)", final_message.message).group(0)  # парсим сумму чека
-            cheque_url = f"https://t.me/{BOT_USERNAME}?" + re.search(r"start=(.*)", final_message.message).group(0)  # создаем ссылку на чек
 
-            logger.info(f"{get_display_name(me)} (uid: {me.id}) -> создал чек на {cheque_amount}, "
-                        f"URL: {cheque_url}...")
-            await client.send_message(OWNER_USERNAME,
-                                      f"💰 <b>Чек на {cheque_amount}!</b>\n➡️ {cheque_url}")  # отправляем сообщение владельцу
+            logger.info(f"{get_display_name(me)} (uid: {me.id}) -> {final_message.message}")
+            await client.send_message(OWNER_USERNAME, final_message.message)  # отправляем сообщение владельцу
         except Exception as err:
             logger.error(f"{get_display_name(me)} (uid: {me.id}) -> Возникла непредвиденная ошибка: {err}")
 
