@@ -4,7 +4,7 @@
 <div align="center">
 
 ![Stars](https://img.shields.io/github/stars/ca4tuk/tonRocket-balance-stacker)
-![Opened Issues](https://img.shields.io/github/issues-raw/ca4tuk/tonRocket-balance-stacker)
+![Issues](https://img.shields.io/github/issues/ca4tuk/tonRocket-balance-stacker)
 ![License](https://img.shields.io/github/license/ca4tuk/tonRocket-balance-stacker)
 
 </div>
